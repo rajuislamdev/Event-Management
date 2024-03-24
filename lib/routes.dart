@@ -1,3 +1,4 @@
+import 'package:event_management/screens/admin/add_event_page.dart';
 import 'package:event_management/screens/admin/event_page.dart';
 import 'package:event_management/screens/common/login_screen.dart';
 import 'package:event_management/screens/common/splash_screen.dart';
@@ -9,6 +10,7 @@ class Routes {
   static const splash = '/';
   static const loginScreen = '/loginScreen';
   static const adminEventPage = '/adminEventPage';
+  static const addEventPage = '/addEventPage';
 }
 
 Route generatedRoutes(RouteSettings settings) {
@@ -23,6 +25,8 @@ Route generatedRoutes(RouteSettings settings) {
       child = const LoginScreen();
     case Routes.adminEventPage:
       child = const AdminEventPage();
+    case Routes.addEventPage:
+      child = const AddEventScreen();
     default:
       throw Exception('Invalid route: ${settings.name}');
   }

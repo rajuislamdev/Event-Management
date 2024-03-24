@@ -1,5 +1,7 @@
 import 'package:event_management/config/app_color.dart';
+import 'package:event_management/routes.dart';
 import 'package:event_management/screens/admin/widgets/event_card.dart';
+import 'package:event_management/utils/context_less_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -18,7 +20,7 @@ class AdminEventPage extends StatelessWidget {
           Icons.add,
           color: AppColor.white,
         ),
-        onPressed: () {},
+        onPressed: () => context.nav.pushNamed(Routes.addEventPage),
       ),
       body: _buildBody(),
     );

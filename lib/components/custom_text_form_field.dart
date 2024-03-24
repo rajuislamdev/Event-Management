@@ -46,7 +46,7 @@ class CustomTextFormField extends StatelessWidget {
                 .bodyText
                 .copyWith(fontWeight: FontWeight.w500),
           ),
-        Gap(12.h),
+        Gap(8.h),
         AbsorbPointer(
           absorbing: readOnly ?? false,
           child: FormBuilderTextField(

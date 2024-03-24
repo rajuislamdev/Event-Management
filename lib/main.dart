@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
         GlobalFunction.changeStatusBarTheme(isDark: false);
 
         return MaterialApp(
+          navigatorKey: GlobalFunction.navigatorKey,
           theme: ThemeData(
             scaffoldBackgroundColor: AppColor.offWhite,
             appBarTheme: AppBarTheme(

@@ -1,8 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:event_management/config/app_color.dart';
 import 'package:event_management/config/app_text_style.dart';
+import 'package:event_management/routes.dart';
+import 'package:event_management/utils/context_less_navigation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 
@@ -32,6 +33,29 @@ class EventCard extends StatelessWidget {
             'Deadline: ${event['deadline']}',
             'Registration Fee: \$${event['registrationFee']}',
           ),
+          Gap(6.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                onPressed: () {
+                  context.nav.pushNamed(Routes.addEventPage);
+                },
+                icon: const Icon(
+                  Icons.edit,
+                  color: AppColor.purple,
+                ),
+              ),
+              Gap(8.w),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.delete,
+                  color: AppColor.red,
+                ),
+              )
+            ],
+          )
         ],
       ),
     );

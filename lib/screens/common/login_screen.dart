@@ -58,6 +58,8 @@ class LoginScreen extends StatelessWidget {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   context.nav.pushNamed(Routes.adminEventPage);
+                } else {
+                  print('object');
                 }
               },
             )
