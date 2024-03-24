@@ -44,6 +44,7 @@ dependencies:
   firebase_core: ^2.27.1
   change_app_package_name: ^1.1.0
   flutter_hooks: ^0.20.5
+  form_builder_validators: ^9.1.0
 
 dev_dependencies:
   flutter_test:

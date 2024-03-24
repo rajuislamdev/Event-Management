@@ -4,7 +4,6 @@ import 'package:event_management/config/app_color.dart';
 import 'package:event_management/config/app_text_style.dart';
 import 'package:event_management/providers/todo_provider.dart';
 import 'package:event_management/utils/context_less_navigation.dart';
-import 'package:event_management/utils/global_function.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -50,8 +49,9 @@ class TodoAddDialog extends StatelessWidget {
                 controller: titleController,
                 textInputAction: TextInputAction.done,
                 hintText: 'Start writing...',
-                validator: (value) => GlobalFunction.commonValidator(
-                    value: value!, name: 'Title', context: context),
+                validator: (v) {
+                  return null;
+                },
               ),
               Gap(20.h),
               Row(

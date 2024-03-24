@@ -1,5 +1,6 @@
-import 'package:event_management/screens/login_screen.dart';
-import 'package:event_management/screens/splash_screen.dart';
+import 'package:event_management/screens/admin/event_page.dart';
+import 'package:event_management/screens/common/login_screen.dart';
+import 'package:event_management/screens/common/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -7,8 +8,7 @@ class Routes {
   Routes._();
   static const splash = '/';
   static const loginScreen = '/loginScreen';
-  static const todos = '/todos';
-  static const todoViewUpdate = '/todoViewUpdate';
+  static const adminEventPage = '/adminEventPage';
 }
 
 Route generatedRoutes(RouteSettings settings) {
@@ -21,6 +21,8 @@ Route generatedRoutes(RouteSettings settings) {
       break;
     case Routes.loginScreen:
       child = const LoginScreen();
+    case Routes.adminEventPage:
+      child = const AdminEventPage();
     default:
       throw Exception('Invalid route: ${settings.name}');
   }
