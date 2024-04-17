@@ -4,6 +4,7 @@ import 'package:event_management/config/app_constants.dart';
 import 'package:event_management/config/app_text_style.dart';
 import 'package:event_management/firebase_options.dart';
 import 'package:event_management/routes.dart';
+import 'package:event_management/utils/context_less_navigation.dart';
 import 'package:event_management/utils/global_function.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
         GlobalFunction.changeStatusBarTheme(isDark: false);
 
         return MaterialApp(
-          navigatorKey: GlobalFunction.navigatorKey,
+          navigatorKey: ContextLess.navigatorkey,
           theme: ThemeData(
             scaffoldBackgroundColor: AppColor.offWhite,
             appBarTheme: AppBarTheme(
