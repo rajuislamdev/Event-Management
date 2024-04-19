@@ -3,6 +3,8 @@ import 'package:event_management/components/custom_text_form_field.dart';
 import 'package:event_management/config/app_color.dart';
 import 'package:event_management/config/app_text_style.dart';
 import 'package:event_management/misc/misc_controller.dart';
+import 'package:event_management/models/student.dart';
+import 'package:event_management/providers/student_provider.dart';
 import 'package:event_management/utils/context_less_navigation.dart';
 import 'package:event_management/utils/global_function.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +25,7 @@ class Registration extends StatelessWidget {
   static final facultyController = TextEditingController();
   static final programController = TextEditingController();
   static final semesterController = TextEditingController();
+  static final passwordController = TextEditingController();
 
   static final GlobalKey<FormBuilderState> _formKey = GlobalKey();
 
@@ -59,11 +62,13 @@ class Registration extends StatelessWidget {
                   CustomTextFormField(
                     name: 'Email',
                     textInputType: TextInputType.text,
-                    controller: nameController,
+                    controller: emailController,
                     textInputAction: TextInputAction.next,
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(
-                          errorText: 'Email is required!')
+                          errorText: 'Email is required!'),
+                      FormBuilderValidators.email(
+                          errorText: 'Please enter valid email!'),
                     ]),
                     hintText: "Enter your email here",
                   ),
@@ -71,11 +76,11 @@ class Registration extends StatelessWidget {
                   CustomTextFormField(
                     name: 'Phone',
                     textInputType: TextInputType.text,
-                    controller: nameController,
+                    controller: phoneController,
                     textInputAction: TextInputAction.next,
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(
-                          errorText: 'Phone is required!')
+                          errorText: 'Phone is required!'),
                     ]),
                     hintText: "Enter your phone number here",
                   ),
@@ -102,7 +107,7 @@ class Registration extends StatelessWidget {
                         child: CustomTextFormField(
                           name: 'Matric No',
                           textInputType: TextInputType.text,
-                          controller: nameController,
+                          controller: matricnoController,
                           textInputAction: TextInputAction.next,
                           validator: FormBuilderValidators.compose([
                             FormBuilderValidators.required(
@@ -131,7 +136,7 @@ class Registration extends StatelessWidget {
                               Gap(12.h),
                               FormBuilderDropdown(
                                 focusColor: Colors.transparent,
-                                name: 'dropdown_field',
+                                name: 'faculty',
                                 decoration: GlobalFunction.buildInputDecoration(
                                   ContextLess.context,
                                   'Faculty',
@@ -172,7 +177,7 @@ class Registration extends StatelessWidget {
                               Gap(12.h),
                               FormBuilderDropdown(
                                 focusColor: Colors.transparent,
-                                name: 'dropdown_field_experience',
+                                name: 'program',
                                 decoration: GlobalFunction.buildInputDecoration(
                                     ContextLess.context, 'Program', null),
                                 onChanged: (value) {
@@ -199,7 +204,7 @@ class Registration extends StatelessWidget {
                   Gap(12.h),
                   FormBuilderDropdown(
                     focusColor: Colors.transparent,
-                    name: 'dropdown_field_experience',
+                    name: 'semester',
                     decoration: GlobalFunction.buildInputDecoration(
                         ContextLess.context, 'Semester', null),
                     onChanged: (value) {
@@ -220,7 +225,7 @@ class Registration extends StatelessWidget {
                   CustomTextFormField(
                     name: 'Password',
                     textInputType: TextInputType.text,
-                    controller: nameController,
+                    controller: passwordController,
                     textInputAction: TextInputAction.next,
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(
@@ -231,12 +236,40 @@ class Registration extends StatelessWidget {
                     hintText: "Enter your phone number here",
                   ),
                   Gap(40.h),
-                  CustomButton(
-                    buttonText: 'Sign Up',
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {}
-                    },
-                  )
+                  ref.watch(studentProvider)
+                      ? const Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : CustomButton(
+                          buttonText: 'Sign Up',
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              final Student student = Student(
+                                utmid: utmidController.text.trim(),
+                                name: nameController.text,
+                                email: emailController.text.trim(),
+                                phone: phoneController.text.trim(),
+                                matricNo: matricnoController.text.trim(),
+                                faculty: _formKey.currentState!
+                                    .fields['faculty']!.value as String,
+                                program: _formKey.currentState!
+                                    .fields['program']!.value as String,
+                                semester: _formKey.currentState!
+                                    .fields['semester']!.value as String,
+                              );
+                              ref
+                                  .read(studentProvider.notifier)
+                                  .registration(
+                                      student: student,
+                                      password: passwordController.text.trim())
+                                  .then((isSuccess) {
+                                if (isSuccess) {
+                                  context.nav.pop();
+                                }
+                              });
+                            }
+                          },
+                        )
                 ],
               ),
             ),

@@ -1,16 +1,15 @@
+import 'package:event_management/utils/global_function.dart';
 import 'package:flutter/material.dart';
 
 class ContextLess {
   ContextLess._();
-  static final GlobalKey<NavigatorState> navigatorkey =
-      GlobalKey<NavigatorState>();
 
   static NavigatorState get nav {
-    return Navigator.of(navigatorkey.currentContext!);
+    return Navigator.of(GlobalFunction.navigatorKey.currentContext!);
   }
 
   static BuildContext get context {
-    return navigatorkey.currentContext!;
+    return GlobalFunction.navigatorKey.currentContext!;
   }
 }
 
