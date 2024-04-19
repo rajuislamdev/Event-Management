@@ -36,4 +36,23 @@ class StudentController extends StateNotifier<bool> {
       return false;
     }
   }
+
+  Future<bool> login({
+    required String utmid,
+    required String password,
+  }) async {
+    try {
+      print('call method');
+      state = true;
+      bool isSuccess = await ref
+          .read(studentServiceProvider)
+          .login(utmid: utmid, password: password);
+      state = false;
+      return isSuccess;
+    } catch (error) {
+      debugPrint(error.toString());
+      state = false;
+      return false;
+    }
+  }
 }

@@ -6,20 +6,13 @@ class HiveService {
   final Ref ref;
   HiveService(this.ref);
 
-  // save the first open status
-  Future setFirstOpenValue({required bool value}) async {
+  Future setUserInfo({
+    required String id,
+    required String accountType,
+  }) async {
     final appSettingsBox = await Hive.openBox(AppConstants.appSettingsBox);
-    appSettingsBox.put(AppConstants.firstOpen, value);
-  }
-
-  // Get user first open status
-  Future<bool?> getUserFirstOpenStatus() async {
-    final appSettingsBox = await Hive.openBox(AppConstants.appSettingsBox);
-    final status = appSettingsBox.get(AppConstants.firstOpen);
-    if (status != null) {
-      return status;
-    }
-    return false;
+    appSettingsBox
+        .put(AppConstants.userInfo, {'id': id, 'accountType': accountType});
   }
 }
 

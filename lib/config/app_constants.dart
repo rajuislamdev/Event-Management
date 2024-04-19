@@ -4,4 +4,6 @@ class AppConstants {
 
   // Settings Veriable Names
   static const String firstOpen = 'firstOpen';
+
+  static const String userInfo = 'userInfo';
 }

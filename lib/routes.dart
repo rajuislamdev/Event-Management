@@ -3,6 +3,7 @@ import 'package:event_management/screens/admin/event_page.dart';
 import 'package:event_management/screens/common/login_screen.dart';
 import 'package:event_management/screens/common/splash_screen.dart';
 import 'package:event_management/screens/student/registration.dart';
+import 'package:event_management/screens/student/student_dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -11,6 +12,7 @@ class Routes {
   static const splash = '/';
   static const loginScreen = '/loginScreen';
   static const studentRegistration = '/studentRegistration';
+  static const studentDashboard = '/studentDashboard';
   static const adminEventPage = '/adminEventPage';
   static const addEventPage = '/addEventPage';
 }
@@ -29,6 +31,8 @@ Route generatedRoutes(RouteSettings settings) {
       child = const AdminEventPage();
     case Routes.addEventPage:
       child = const AddEventScreen();
+    case Routes.studentDashboard:
+      child = const StudentDashboard();
     case Routes.studentRegistration:
       child = const Registration();
     default:

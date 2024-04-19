@@ -236,7 +236,7 @@ class Registration extends StatelessWidget {
                     hintText: "Enter your phone number here",
                   ),
                   Gap(40.h),
-                  ref.watch(studentProvider)
+                  ref.watch(studentControllerProvider)
                       ? const Center(
                           child: CircularProgressIndicator(),
                         )
@@ -258,7 +258,7 @@ class Registration extends StatelessWidget {
                                     .fields['semester']!.value as String,
                               );
                               ref
-                                  .read(studentProvider.notifier)
+                                  .read(studentControllerProvider.notifier)
                                   .registration(
                                       student: student,
                                       password: passwordController.text.trim())

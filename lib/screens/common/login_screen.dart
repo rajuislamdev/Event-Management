@@ -3,6 +3,8 @@ import 'package:event_management/components/custom_text_form_field.dart';
 import 'package:event_management/config/app_color.dart';
 import 'package:event_management/config/app_text_style.dart';
 import 'package:event_management/misc/misc_controller.dart';
+import 'package:event_management/providers/admin_controller_provider.dart';
+import 'package:event_management/providers/student_provider.dart';
 import 'package:event_management/routes.dart';
 import 'package:event_management/utils/context_less_navigation.dart';
 import 'package:flutter/material.dart';
@@ -87,16 +89,47 @@ class LoginScreen extends StatelessWidget {
                     .toList(),
               ),
               Gap(20.h),
-              CustomButton(
-                buttonText: 'Log in',
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    context.nav.pushNamed(Routes.adminEventPage);
-                  } else {
-                    print('object');
-                  }
-                },
-              )
+              ref.watch(adminControllerProvider) ||
+                      ref.watch(studentControllerProvider)
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : CustomButton(
+                      buttonText: 'Log in',
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          if (ref.read(selectedAccountType) ==
+                              AccountType.student.name) {
+                            print('call');
+                            ref
+                                .read(studentControllerProvider.notifier)
+                                .login(
+                                  utmid: _utmidController.text.trim(),
+                                  password: _passwordController.text.trim(),
+                                )
+                                .then((isSuccess) {
+                              if (isSuccess) {
+                                context.nav.pushNamedAndRemoveUntil(
+                                    Routes.studentDashboard, (route) => false);
+                              }
+                            });
+                          } else {
+                            ref
+                                .read(adminControllerProvider.notifier)
+                                .login(
+                                  utmid: _utmidController.text.trim(),
+                                  password: _passwordController.text.trim(),
+                                )
+                                .then((isSuccess) {
+                              if (isSuccess) {
+                                context.nav.pushNamedAndRemoveUntil(
+                                    Routes.adminEventPage, (route) => false);
+                              }
+                            });
+                          }
+                        }
+                      },
+                    )
             ],
           ),
         ),
@@ -130,3 +163,5 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
+
+enum AccountType { admin, student }
