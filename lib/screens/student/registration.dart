@@ -2,7 +2,6 @@ import 'package:event_management/components/custom_button.dart';
 import 'package:event_management/components/custom_text_form_field.dart';
 import 'package:event_management/config/app_color.dart';
 import 'package:event_management/config/app_text_style.dart';
-import 'package:event_management/misc/misc_controller.dart';
 import 'package:event_management/models/student.dart';
 import 'package:event_management/providers/student_provider.dart';
 import 'package:event_management/utils/context_less_navigation.dart';
@@ -142,10 +141,7 @@ class Registration extends StatelessWidget {
                                   'Faculty',
                                   null,
                                 ),
-                                onChanged: (value) {
-                                  ref.read(selectedFaculty.notifier).state =
-                                      value.toString();
-                                },
+                                onChanged: (value) {},
                                 validator: FormBuilderValidators.compose([
                                   FormBuilderValidators.required(
                                       errorText: 'Faculty is required!')
@@ -180,10 +176,7 @@ class Registration extends StatelessWidget {
                                 name: 'program',
                                 decoration: GlobalFunction.buildInputDecoration(
                                     ContextLess.context, 'Program', null),
-                                onChanged: (value) {
-                                  ref.read(selectedProgram.notifier).state =
-                                      value;
-                                },
+                                onChanged: (value) {},
                                 validator: FormBuilderValidators.compose([
                                   FormBuilderValidators.required(
                                       errorText: 'Program is required!')
@@ -207,9 +200,7 @@ class Registration extends StatelessWidget {
                     name: 'semester',
                     decoration: GlobalFunction.buildInputDecoration(
                         ContextLess.context, 'Semester', null),
-                    onChanged: (value) {
-                      ref.read(selectedSemester.notifier).state = value;
-                    },
+                    onChanged: (value) {},
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(
                           errorText: 'Semester is required!')

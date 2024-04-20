@@ -1,9 +1,13 @@
 import 'package:event_management/components/custom_button.dart';
 import 'package:event_management/components/custom_text_form_field.dart';
+import 'package:event_management/config/app_text_style.dart';
+import 'package:event_management/models/event.dart';
+import 'package:event_management/providers/event_provider.dart';
 import 'package:event_management/utils/context_less_navigation.dart';
 import 'package:event_management/utils/global_function.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
@@ -42,7 +46,34 @@ class AddEventScreen extends StatelessWidget {
         child: FormBuilder(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                'Categories',
+                style: AppTextStyle(context)
+                    .bodyText
+                    .copyWith(fontWeight: FontWeight.w500),
+              ),
+              Gap(8.h),
+              FormBuilderDropdown(
+                focusColor: Colors.transparent,
+                name: 'categories',
+                initialValue: '',
+                decoration: GlobalFunction.buildInputDecoration(
+                    ContextLess.context, 'Select category', null),
+                onChanged: (value) {},
+                validator: FormBuilderValidators.compose([
+                  FormBuilderValidators.required(
+                      errorText: 'Category is required!')
+                ]),
+                items: categoryList
+                    .map((dropdownValue) => DropdownMenuItem(
+                          value: dropdownValue,
+                          child: Text(dropdownValue.toString()),
+                        ))
+                    .toList(),
+              ),
+              Gap(12.h),
               CustomTextFormField(
                 name: 'Event Name',
                 textInputType: TextInputType.text,
@@ -215,18 +246,61 @@ class AddEventScreen extends StatelessWidget {
   Widget _buidBottomNavigationBar(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.w).copyWith(bottom: 10.h),
-      child: CustomButton(
-        buttonText: 'Save',
-        onPressed: () {
-          if (_formKey.currentState!.validate()) {
-            GlobalFunction.showCustomSnackbar(
-              message: 'Event added successfully',
-              isSuccess: true,
-            );
-            context.nav.pop();
-          }
-        },
-      ),
+      child: Consumer(builder: (context, ref, _) {
+        return ref.watch(eventControllerProvider)
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : CustomButton(
+                buttonText: 'Save',
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    final EventModel eventModel = EventModel(
+                      category: _formKey
+                          .currentState!.fields['categories']!.value as String,
+                      eventName: _eventNameController.text,
+                      organizer: _organizerNameController.text,
+                      date: _dateController.text.trim(),
+                      time: _timeController.text.trim(),
+                      location: _locationController.text,
+                      details: _detailsController.text,
+                      deadline: _deadLineController.text.trim(),
+                      fee: int.parse(
+                        _feeController.text.trim(),
+                      ),
+                    );
+
+                    ref
+                        .read(eventControllerProvider.notifier)
+                        .createEvent(eventModel: eventModel)
+                        .then((response) {
+                      GlobalFunction.showCustomSnackbar(
+                        message: response.message,
+                        isSuccess: response.isSuccess,
+                      );
+                      if (response.isSuccess) {
+                        context.nav.pop();
+                      }
+                    });
+                  }
+                },
+              );
+      }),
     );
   }
 }
+
+final List<String> categoryList = [
+  'Business',
+  'Social',
+  'Educational',
+  'Cultural',
+  'Sports',
+  'Fundraising',
+  'Exhibition',
+  'Concert',
+  'Festival',
+  'Religious',
+  'International Student Society',
+  'Tech'
+];
