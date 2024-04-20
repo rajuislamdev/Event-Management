@@ -43,7 +43,7 @@ class EventModel {
       organizer: organizer ?? this.organizer,
       date: date ?? this.date,
       time: time ?? this.time,
-      location: locationn ?? this.location,
+      location: locationn ?? location,
       details: details ?? this.details,
       deadline: deadline ?? this.deadline,
       fee: fee ?? this.fee,
@@ -66,7 +66,7 @@ class EventModel {
 
   factory EventModel.fromMap(Map<String, dynamic> map) {
     return EventModel(
-      id: map['id'] as String,
+      id: map['id'] as String? ?? '',
       category: map['category'] as String,
       eventName: map['eventName'] as String,
       organizer: map['organizer'] as String,

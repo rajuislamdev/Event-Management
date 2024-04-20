@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:event_management/components/custom_button.dart';
 import 'package:event_management/components/custom_text_form_field.dart';
 import 'package:event_management/config/app_text_style.dart';
@@ -12,8 +13,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 
-class AddEventScreen extends StatelessWidget {
-  const AddEventScreen({super.key});
+class AddEventScreen extends StatefulWidget {
+  final EventModel? event;
+  const AddEventScreen({
+    super.key,
+    this.event,
+  });
   static final TextEditingController _eventNameController =
       TextEditingController();
   static final TextEditingController _organizerNameController =
@@ -28,6 +33,27 @@ class AddEventScreen extends StatelessWidget {
   static final TextEditingController _deadLineController =
       TextEditingController();
   static final GlobalKey<FormBuilderState> _formKey = GlobalKey();
+
+  @override
+  State<AddEventScreen> createState() => _AddEventScreenState();
+}
+
+class _AddEventScreenState extends State<AddEventScreen> {
+  @override
+  void initState() {
+    if (widget.event != null) {
+      AddEventScreen._eventNameController.text = widget.event!.eventName;
+      AddEventScreen._organizerNameController.text = widget.event!.organizer;
+      AddEventScreen._dateController.text = widget.event!.date;
+      AddEventScreen._timeController.text = widget.event!.time;
+      AddEventScreen._locationController.text = widget.event!.location;
+      AddEventScreen._detailsController.text = widget.event!.details;
+      AddEventScreen._deadLineController.text = widget.event!.deadline;
+      AddEventScreen._feeController.text = widget.event!.fee.toString();
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,7 +70,7 @@ class AddEventScreen extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
       child: SingleChildScrollView(
         child: FormBuilder(
-          key: _formKey,
+          key: AddEventScreen._formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -58,7 +84,7 @@ class AddEventScreen extends StatelessWidget {
               FormBuilderDropdown(
                 focusColor: Colors.transparent,
                 name: 'categories',
-                initialValue: '',
+                initialValue: widget.event?.category ?? '',
                 decoration: GlobalFunction.buildInputDecoration(
                     ContextLess.context, 'Select category', null),
                 onChanged: (value) {},
@@ -77,7 +103,7 @@ class AddEventScreen extends StatelessWidget {
               CustomTextFormField(
                 name: 'Event Name',
                 textInputType: TextInputType.text,
-                controller: _eventNameController,
+                controller: AddEventScreen._eventNameController,
                 textInputAction: TextInputAction.next,
                 validator: FormBuilderValidators.compose(
                   [
@@ -91,7 +117,7 @@ class AddEventScreen extends StatelessWidget {
               CustomTextFormField(
                 name: 'Organizer',
                 textInputType: TextInputType.text,
-                controller: _organizerNameController,
+                controller: AddEventScreen._organizerNameController,
                 textInputAction: TextInputAction.next,
                 validator: FormBuilderValidators.compose(
                   [
@@ -109,7 +135,7 @@ class AddEventScreen extends StatelessWidget {
                     child: GestureDetector(
                       onTap: () {
                         GlobalFunction.selectDate(context).then((date) {
-                          _dateController.text =
+                          AddEventScreen._dateController.text =
                               GlobalFunction.formateDate(date);
                         });
                       },
@@ -118,7 +144,7 @@ class AddEventScreen extends StatelessWidget {
                         name: 'Date',
                         widget: const Icon(Icons.arrow_drop_down),
                         textInputType: TextInputType.text,
-                        controller: _dateController,
+                        controller: AddEventScreen._dateController,
                         textInputAction: TextInputAction.next,
                         validator: FormBuilderValidators.compose(
                           [
@@ -136,7 +162,7 @@ class AddEventScreen extends StatelessWidget {
                     child: GestureDetector(
                       onTap: () {
                         GlobalFunction.selectTime(context).then((time) {
-                          _timeController.text =
+                          AddEventScreen._timeController.text =
                               GlobalFunction.formatTimeOfDay(time) ?? '';
                         });
                       },
@@ -145,7 +171,7 @@ class AddEventScreen extends StatelessWidget {
                         name: 'Time',
                         widget: const Icon(Icons.arrow_drop_down),
                         textInputType: TextInputType.text,
-                        controller: _timeController,
+                        controller: AddEventScreen._timeController,
                         textInputAction: TextInputAction.next,
                         validator: FormBuilderValidators.compose(
                           [
@@ -163,7 +189,7 @@ class AddEventScreen extends StatelessWidget {
               CustomTextFormField(
                 name: 'Location',
                 textInputType: TextInputType.text,
-                controller: _locationController,
+                controller: AddEventScreen._locationController,
                 textInputAction: TextInputAction.next,
                 validator: FormBuilderValidators.compose(
                   [
@@ -178,7 +204,7 @@ class AddEventScreen extends StatelessWidget {
                 name: 'Write Details',
                 minLines: 4,
                 textInputType: TextInputType.multiline,
-                controller: _detailsController,
+                controller: AddEventScreen._detailsController,
                 textInputAction: TextInputAction.newline,
                 validator: FormBuilderValidators.compose(
                   [
@@ -196,7 +222,7 @@ class AddEventScreen extends StatelessWidget {
                     child: GestureDetector(
                       onTap: () {
                         GlobalFunction.selectDate(context).then((deadlinDate) {
-                          _deadLineController.text =
+                          AddEventScreen._deadLineController.text =
                               GlobalFunction.formateDate(deadlinDate);
                         });
                       },
@@ -205,7 +231,7 @@ class AddEventScreen extends StatelessWidget {
                         name: 'Deadline',
                         widget: const Icon(Icons.arrow_drop_down),
                         textInputType: TextInputType.text,
-                        controller: _deadLineController,
+                        controller: AddEventScreen._deadLineController,
                         textInputAction: TextInputAction.next,
                         validator: FormBuilderValidators.compose(
                           [
@@ -223,7 +249,7 @@ class AddEventScreen extends StatelessWidget {
                     child: CustomTextFormField(
                       name: 'Fee',
                       textInputType: TextInputType.number,
-                      controller: _feeController,
+                      controller: AddEventScreen._feeController,
                       textInputAction: TextInputAction.next,
                       validator: FormBuilderValidators.compose(
                         [
@@ -252,41 +278,71 @@ class AddEventScreen extends StatelessWidget {
                 child: CircularProgressIndicator(),
               )
             : CustomButton(
-                buttonText: 'Save',
+                buttonText: widget.event != null ? 'Update' : 'Save',
                 onPressed: () {
-                  if (_formKey.currentState!.validate()) {
+                  if (AddEventScreen._formKey.currentState!.validate()) {
                     final EventModel eventModel = EventModel(
-                      category: _formKey
-                          .currentState!.fields['categories']!.value as String,
-                      eventName: _eventNameController.text,
-                      organizer: _organizerNameController.text,
-                      date: _dateController.text.trim(),
-                      time: _timeController.text.trim(),
-                      location: _locationController.text,
-                      details: _detailsController.text,
-                      deadline: _deadLineController.text.trim(),
+                      category: AddEventScreen._formKey.currentState!
+                          .fields['categories']!.value as String,
+                      eventName: AddEventScreen._eventNameController.text,
+                      organizer: AddEventScreen._organizerNameController.text,
+                      date: AddEventScreen._dateController.text.trim(),
+                      time: AddEventScreen._timeController.text.trim(),
+                      location: AddEventScreen._locationController.text,
+                      details: AddEventScreen._detailsController.text,
+                      deadline: AddEventScreen._deadLineController.text.trim(),
                       fee: int.parse(
-                        _feeController.text.trim(),
+                        AddEventScreen._feeController.text.trim(),
                       ),
                     );
-
-                    ref
-                        .read(eventControllerProvider.notifier)
-                        .createEvent(eventModel: eventModel)
-                        .then((response) {
-                      GlobalFunction.showCustomSnackbar(
-                        message: response.message,
-                        isSuccess: response.isSuccess,
-                      );
-                      if (response.isSuccess) {
-                        context.nav.pop();
-                      }
-                    });
+                    if (widget.event != null) {
+                      ref
+                          .read(eventControllerProvider.notifier)
+                          .updateEvent(
+                            eventModel: eventModel,
+                            docId: widget.event?.id,
+                          )
+                          .then((response) {
+                        GlobalFunction.showCustomSnackbar(
+                          message: response.message,
+                          isSuccess: response.isSuccess,
+                        );
+                        if (response.isSuccess) {
+                          clear();
+                          context.nav.pop();
+                        }
+                      });
+                    } else {
+                      ref
+                          .read(eventControllerProvider.notifier)
+                          .createEvent(eventModel: eventModel)
+                          .then((response) {
+                        GlobalFunction.showCustomSnackbar(
+                          message: response.message,
+                          isSuccess: response.isSuccess,
+                        );
+                        if (response.isSuccess) {
+                          clear();
+                          context.nav.pop();
+                        }
+                      });
+                    }
                   }
                 },
               );
       }),
     );
+  }
+
+  void clear() {
+    AddEventScreen._eventNameController.clear();
+    AddEventScreen._organizerNameController.clear();
+    AddEventScreen._dateController.clear();
+    AddEventScreen._timeController.clear();
+    AddEventScreen._locationController.clear();
+    AddEventScreen._detailsController.clear();
+    AddEventScreen._deadLineController.clear();
+    AddEventScreen._feeController.clear();
   }
 }
 

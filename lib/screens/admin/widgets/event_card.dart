@@ -1,14 +1,17 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:event_management/components/confirmation_dialog.dart';
 import 'package:event_management/config/app_color.dart';
 import 'package:event_management/config/app_text_style.dart';
+import 'package:event_management/models/event.dart';
+import 'package:event_management/providers/event_provider.dart';
 import 'package:event_management/routes.dart';
 import 'package:event_management/utils/context_less_navigation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 
-class EventCard extends StatelessWidget {
-  final Map<String, dynamic> event;
+class EventCard extends StatefulWidget {
+  final EventModel event;
 
   const EventCard({
     super.key,
@@ -16,44 +19,89 @@ class EventCard extends StatelessWidget {
   });
 
   @override
+  State<EventCard> createState() => _EventCardState();
+}
+
+class _EventCardState extends State<EventCard> {
+  bool isLoading = false;
+
+  @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColor.white,
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
+      decoration: BoxDecoration(
+        color: AppColor.white,
+        borderRadius: BorderRadius.circular(8.r),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildEventDetails(
             context,
-            event['evenName'],
-            '${event['date']} ${event['time']}',
-            'Organizer ${event['organizer']}',
-            'Location: ${event['location']}',
-            event['details'],
-            'Deadline: ${event['deadline']}',
-            'Registration Fee: \$${event['registrationFee']}',
+            widget.event.eventName,
+            '${widget.event.date} ${widget.event.time}',
+            'Organizer ${widget.event.organizer}',
+            'Location: ${widget.event.location}',
+            widget.event.details,
+            'Deadline: ${widget.event.deadline}',
+            'Registration Fee: \$${widget.event.fee}',
           ),
-          Gap(6.h),
+          Gap(12.h),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconButton(
-                onPressed: () {
-                  context.nav.pushNamed(Routes.addEventPage);
-                },
-                icon: const Icon(
-                  Icons.edit,
-                  color: AppColor.purple,
-                ),
+              Text(
+                widget.event.category,
+                style: AppTextStyle(context)
+                    .buttonText
+                    .copyWith(color: AppColor.purple),
               ),
-              Gap(8.w),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.delete,
-                  color: AppColor.red,
-                ),
-              )
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () => context.nav.pushNamed(Routes.addEventPage,
+                        arguments: widget.event),
+                    child: CircleAvatar(
+                      backgroundColor: AppColor.offWhite,
+                      radius: 16.r,
+                      child: const Center(
+                        child: Icon(Icons.edit),
+                      ),
+                    ),
+                  ),
+                  Gap(8.w),
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => Consumer(builder: (context, ref, _) {
+                          return ConfirmationDialog(
+                            title: 'Are you sure want to delete this event?',
+                            confirmButtonText: 'Confirm',
+                            isLoading: ref.watch(eventControllerProvider),
+                            onPressed: () {
+                              ref
+                                  .read(eventControllerProvider.notifier)
+                                  .deleteEvent(docId: widget.event.id!)
+                                  .then((response) {
+                                context.nav.pop();
+                              });
+                            },
+                          );
+                        }),
+                      );
+                    },
+                    child: CircleAvatar(
+                      backgroundColor: AppColor.offWhite,
+                      radius: 16.r,
+                      child: const Center(
+                        child: Icon(Icons.delete),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           )
         ],

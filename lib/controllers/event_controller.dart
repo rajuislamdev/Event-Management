@@ -19,6 +19,51 @@ class EventController extends StateNotifier<bool> {
       );
     } catch (error) {
       debugPrint(error.toString());
+      state = false;
+      return CommonResponse(
+        isSuccess: false,
+        message: error.toString(),
+      );
+    }
+  }
+
+  Future<CommonResponse> updateEvent({
+    required EventModel eventModel,
+    required String? docId,
+  }) async {
+    try {
+      state = true;
+      await ref.read(eventServiceProvider).updateEvent(
+            eventModel: eventModel,
+            docId: docId,
+          );
+      state = false;
+      return CommonResponse(
+        isSuccess: true,
+        message: 'Event has been successfully updated!',
+      );
+    } catch (error) {
+      debugPrint(error.toString());
+      state = false;
+      return CommonResponse(
+        isSuccess: false,
+        message: error.toString(),
+      );
+    }
+  }
+
+  Future<CommonResponse> deleteEvent({required String docId}) async {
+    try {
+      state = true;
+      await ref.read(eventServiceProvider).deleteEvent(docId: docId);
+      state = false;
+      return CommonResponse(
+        isSuccess: true,
+        message: 'Event has been successfully deleted!',
+      );
+    } catch (error) {
+      debugPrint(error.toString());
+      state = false;
       return CommonResponse(
         isSuccess: false,
         message: error.toString(),

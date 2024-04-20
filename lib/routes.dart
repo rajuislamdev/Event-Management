@@ -1,3 +1,4 @@
+import 'package:event_management/models/event.dart';
 import 'package:event_management/screens/admin/add_event_page.dart';
 import 'package:event_management/screens/admin/event_page.dart';
 import 'package:event_management/screens/common/login_screen.dart';
@@ -30,7 +31,10 @@ Route generatedRoutes(RouteSettings settings) {
     case Routes.adminEventPage:
       child = const AdminEventPage();
     case Routes.addEventPage:
-      child = const AddEventScreen();
+      final EventModel? event = settings.arguments as EventModel?;
+      child = AddEventScreen(
+        event: event,
+      );
     case Routes.studentDashboard:
       child = const StudentDashboard();
     case Routes.studentRegistration:

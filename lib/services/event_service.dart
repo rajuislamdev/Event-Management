@@ -12,6 +12,18 @@ class EventService {
     await eventCollectionRef.add(eventModel.toMap());
     return true;
   }
+
+  Future<bool> updateEvent({
+    required EventModel eventModel,
+    required String? docId,
+  }) async {
+    await eventCollectionRef.doc(docId).update(eventModel.toMap());
+    return true;
+  }
+
+  Future<void> deleteEvent({required String docId}) async {
+    await eventCollectionRef.doc(docId).delete();
+  }
 }
 
 final eventServiceProvider = Provider((ref) => EventService(ref));
