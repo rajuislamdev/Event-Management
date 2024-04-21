@@ -270,31 +270,6 @@ class Registration extends StatelessWidget {
     });
   }
 
-  static final List<String> faculty = [
-    'Faculty1',
-    'Faculty2',
-    'Faculty3',
-    'Faculty4'
-  ];
-  static final List<String> programs = [
-    'Program1',
-    'Program2',
-    'Program3',
-    'Program4'
-  ];
-  static final List<String> semester = [
-    'First',
-    'Second',
-    'Third',
-    'Four',
-    'Five',
-    'Six',
-    'Seven',
-    'Eight',
-    'Nine',
-    'Ten'
-  ];
-
   Widget _buildBottomNav({required BuildContext context}) {
     return SizedBox(
       height: 55.h,
@@ -321,3 +296,18 @@ class Registration extends StatelessWidget {
     );
   }
 }
+
+final List<String> faculty = ['Faculty1', 'Faculty2', 'Faculty3', 'Faculty4'];
+final List<String> programs = ['Program1', 'Program2', 'Program3', 'Program4'];
+final List<String> semester = [
+  'First',
+  'Second',
+  'Third',
+  'Four',
+  'Five',
+  'Six',
+  'Seven',
+  'Eight',
+  'Nine',
+  'Ten'
+];

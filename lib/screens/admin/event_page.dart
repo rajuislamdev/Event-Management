@@ -17,6 +17,17 @@ class AdminEventPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('All Event'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              context.nav.pushNamed(Routes.adminProfile);
+            },
+            icon: Icon(
+              Icons.person,
+              size: 28.sp,
+            ),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColor.purple,
@@ -51,21 +62,11 @@ class AdminEventPage extends StatelessWidget {
           padding: EdgeInsets.only(bottom: 10.h),
           child: EventCard(
             event: event,
+            isAdmin: true,
           ),
         );
       },
     );
-
-    // ListView.builder(
-    //   padding: EdgeInsets.symmetric(vertical: 14.h),
-    //   itemCount: _events.length,
-    //   itemBuilder: (context, index) => Padding(
-    //     padding: EdgeInsets.only(bottom: 14.h),
-    //     child: EventCard(
-    //       event: _events[index],
-    //     ),
-    //   ),
-    // );
   }
 
   static final doctorsQuery = FirebaseFirestore.instance
@@ -73,65 +74,8 @@ class AdminEventPage extends StatelessWidget {
       .orderBy('date', descending: true)
       .withConverter<EventModel>(
         fromFirestore: (snapshot, _) {
-          print(snapshot.id);
           return EventModel.fromMap(snapshot.data()!).copyWith(id: snapshot.id);
         },
         toFirestore: (event, _) => event.toMap(),
       );
-
-  static final List<Map<String, dynamic>> _events = [
-    {
-      'evenName': 'Seminers',
-      'organizer': 'Campus',
-      'date': '10-12-2024',
-      'time': '12:00 AM',
-      'location': 'Bangla Motor qater amabsi',
-      'details':
-          'The portal should be a central location where students can find information about all types of events',
-      'registrationFee': 120,
-      'deadline': '01-12-2024',
-    },
-    {
-      'evenName': 'Seminers',
-      'organizer': 'Campus',
-      'date': '10-12-2024',
-      'time': '12:00 AM',
-      'location': 'Bangla Motor qater amabsi',
-      'details': 'This is a seminers events',
-      'registrationFee': 120,
-      'deadline': '01-12-2024',
-    },
-    {
-      'evenName': 'Seminers',
-      'organizer': 'Campus',
-      'date': '10-12-2024',
-      'time': '12:00 AM',
-      'location': 'Bangla Motor qater amabsi',
-      'details':
-          'The portal should be a central location where students can find information about all types of eventss',
-      'registrationFee': 120,
-      'deadline': '01-12-2024',
-    },
-    {
-      'evenName': 'Seminers',
-      'organizer': 'Campus',
-      'date': '10-12-2024',
-      'time': '12:00 AM',
-      'location': 'Bangla Motor qater amabsi',
-      'details': 'This is a seminers events',
-      'registrationFee': 120,
-      'deadline': '01-12-2024',
-    },
-    {
-      'evenName': 'Seminers',
-      'organizer': 'Campus',
-      'date': '10-12-2024',
-      'time': '12:00 AM',
-      'location': 'Dhaka',
-      'details':
-          'The portal should be a central location where students can find information about all types of events.The portal should be up-to-date with the latest event information',
-      'registrationFee': 120,
-      'deadline': '01-12-2024',
-    },
-  ];
 }

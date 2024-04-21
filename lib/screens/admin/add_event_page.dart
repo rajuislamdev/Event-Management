@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:event_management/components/custom_button.dart';
 import 'package:event_management/components/custom_text_form_field.dart';
 import 'package:event_management/config/app_text_style.dart';

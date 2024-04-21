@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:event_management/models/admin.dart';
 import 'package:event_management/screens/common/login_screen.dart';
 import 'package:event_management/services/hive_service.dart';
 import 'package:event_management/utils/global_function.dart';
@@ -9,7 +10,7 @@ class AdminService {
   final Ref ref;
   AdminService(this.ref);
 
-  final CollectionReference studentCollectionRef =
+  final CollectionReference adminCollectionRef =
       FirebaseFirestore.instance.collection('admin');
 
   Future<bool> login({
@@ -48,7 +49,7 @@ class AdminService {
   }
 
   Future<bool> checkAccountExist({required String utmid}) async {
-    final querySnapshot = await studentCollectionRef
+    final querySnapshot = await adminCollectionRef
         .where('utmid', isEqualTo: utmid)
         .limit(1)
         .get();
@@ -57,7 +58,7 @@ class AdminService {
   }
 
   Future<Map<String, dynamic>> getUserData({required String utmid}) async {
-    final querySnapshot = await studentCollectionRef
+    final querySnapshot = await adminCollectionRef
         .where('utmid', isEqualTo: utmid)
         .limit(1)
         .get();
@@ -66,6 +67,23 @@ class AdminService {
       'id': querySnapshot.docs.first.id,
       ...userData as Map<String, dynamic>,
     };
+  }
+
+  Future<Admin> getAdmin(String docId) async {
+    DocumentSnapshot docSnap = await adminCollectionRef.doc(docId).get();
+    Map<String, dynamic> data = docSnap.data()! as Map<String, dynamic>;
+    data.remove('password');
+    return Admin.fromMap(data);
+  }
+
+  Future<void> updateAdminInfo(
+      {required String documentId, required Admin updatedData}) async {
+    try {
+      await adminCollectionRef.doc(documentId).update(updatedData.toMap());
+      debugPrint("Admin information has been successfully updated");
+    } catch (error) {
+      debugPrint("Error updating admin info: $error");
+    }
   }
 }
 

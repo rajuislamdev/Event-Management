@@ -1,10 +1,12 @@
 import 'package:event_management/models/event.dart';
 import 'package:event_management/screens/admin/add_event_page.dart';
+import 'package:event_management/screens/admin/admin_profile.dart';
 import 'package:event_management/screens/admin/event_page.dart';
 import 'package:event_management/screens/common/login_screen.dart';
 import 'package:event_management/screens/common/splash_screen.dart';
 import 'package:event_management/screens/student/registration.dart';
 import 'package:event_management/screens/student/student_dashboard.dart';
+import 'package:event_management/screens/student/student_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -16,6 +18,8 @@ class Routes {
   static const studentDashboard = '/studentDashboard';
   static const adminEventPage = '/adminEventPage';
   static const addEventPage = '/addEventPage';
+  static const studentProfile = '/studentProfile';
+  static const adminProfile = '/adminProfile';
 }
 
 Route generatedRoutes(RouteSettings settings) {
@@ -39,6 +43,10 @@ Route generatedRoutes(RouteSettings settings) {
       child = const StudentDashboard();
     case Routes.studentRegistration:
       child = const Registration();
+    case Routes.studentProfile:
+      child = const StudentProfile();
+    case Routes.adminProfile:
+      child = const AdminProfile();
     default:
       throw Exception('Invalid route: ${settings.name}');
   }

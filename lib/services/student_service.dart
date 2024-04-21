@@ -108,6 +108,24 @@ class StudentService {
       return false;
     }
   }
+
+  Future<Student> getStudent(String docId) async {
+    DocumentSnapshot docSnap = await studentCollectionRef.doc(docId).get();
+    Map<String, dynamic> data = docSnap.data()! as Map<String, dynamic>;
+    data.remove('password');
+    return Student.fromMap(data).copyWith(id: docSnap.id);
+  }
+
+  Future<void> updateStudentInfo(
+      {required String documentId, required Student updatedData}) async {
+    try {
+      await studentCollectionRef.doc(documentId).update(updatedData.toMap());
+      debugPrint("Student information has been successfully updated");
+    } catch (error) {
+      debugPrint("Error updating admin info: $error");
+    }
+    return;
+  }
 }
 
 final studentServiceProvider = StateProvider((ref) => StudentService(ref));

@@ -14,6 +14,27 @@ class HiveService {
     appSettingsBox
         .put(AppConstants.userInfo, {'id': id, 'accountType': accountType});
   }
+
+  Future<Map<dynamic, dynamic>?> getUserInfo() async {
+    final appSettingsBox = await Hive.openBox(AppConstants.appSettingsBox);
+    final userInfo =
+        appSettingsBox.get(AppConstants.userInfo) as Map<dynamic, dynamic>?;
+    if (userInfo != null) {
+      return userInfo;
+    }
+    return null;
+  }
+
+  String? getUserId() {
+    final box = Hive.box(AppConstants.appSettingsBox);
+    var userinf = box.get(AppConstants.userInfo);
+
+    return userinf['id'];
+  }
+
+  Future<void> logout() async {
+    Hive.box(AppConstants.appSettingsBox).clear();
+  }
 }
 
 final hiveServiceProvider = Provider((ref) => HiveService(ref));

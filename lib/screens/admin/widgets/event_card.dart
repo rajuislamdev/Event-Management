@@ -12,10 +12,12 @@ import 'package:gap/gap.dart';
 
 class EventCard extends StatefulWidget {
   final EventModel event;
+  final bool isAdmin;
 
   const EventCard({
     super.key,
     required this.event,
+    required this.isAdmin,
   });
 
   @override
@@ -56,51 +58,54 @@ class _EventCardState extends State<EventCard> {
                     .buttonText
                     .copyWith(color: AppColor.purple),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: () => context.nav.pushNamed(Routes.addEventPage,
-                        arguments: widget.event),
-                    child: CircleAvatar(
-                      backgroundColor: AppColor.offWhite,
-                      radius: 16.r,
-                      child: const Center(
-                        child: Icon(Icons.edit),
+              Visibility(
+                visible: widget.isAdmin,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () => context.nav.pushNamed(Routes.addEventPage,
+                          arguments: widget.event),
+                      child: CircleAvatar(
+                        backgroundColor: AppColor.offWhite,
+                        radius: 16.r,
+                        child: const Center(
+                          child: Icon(Icons.edit),
+                        ),
                       ),
                     ),
-                  ),
-                  Gap(8.w),
-                  GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => Consumer(builder: (context, ref, _) {
-                          return ConfirmationDialog(
-                            title: 'Are you sure want to delete this event?',
-                            confirmButtonText: 'Confirm',
-                            isLoading: ref.watch(eventControllerProvider),
-                            onPressed: () {
-                              ref
-                                  .read(eventControllerProvider.notifier)
-                                  .deleteEvent(docId: widget.event.id!)
-                                  .then((response) {
-                                context.nav.pop();
-                              });
-                            },
-                          );
-                        }),
-                      );
-                    },
-                    child: CircleAvatar(
-                      backgroundColor: AppColor.offWhite,
-                      radius: 16.r,
-                      child: const Center(
-                        child: Icon(Icons.delete),
+                    Gap(8.w),
+                    GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => Consumer(builder: (context, ref, _) {
+                            return ConfirmationDialog(
+                              title: 'Are you sure want to delete this event?',
+                              confirmButtonText: 'Confirm',
+                              isLoading: ref.watch(eventControllerProvider),
+                              onPressed: () {
+                                ref
+                                    .read(eventControllerProvider.notifier)
+                                    .deleteEvent(docId: widget.event.id!)
+                                    .then((response) {
+                                  context.nav.pop();
+                                });
+                              },
+                            );
+                          }),
+                        );
+                      },
+                      child: CircleAvatar(
+                        backgroundColor: AppColor.offWhite,
+                        radius: 16.r,
+                        child: const Center(
+                          child: Icon(Icons.delete),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           )

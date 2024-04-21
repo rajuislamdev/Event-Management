@@ -1,15 +1,27 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_management/config/app_color.dart';
 import 'package:event_management/config/app_text_style.dart';
 import 'package:event_management/misc/misc_controller.dart';
+import 'package:event_management/models/event.dart';
+import 'package:event_management/routes.dart';
+import 'package:event_management/screens/admin/widgets/event_card.dart';
 import 'package:event_management/utils/context_less_navigation.dart';
+import 'package:firebase_ui_firestore/firebase_ui_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 
-class StudentDashboard extends StatelessWidget {
-  const StudentDashboard({super.key});
+class StudentDashboard extends StatefulWidget {
+  const StudentDashboard({
+    super.key,
+  });
 
+  @override
+  State<StudentDashboard> createState() => _StudentDashboardState();
+}
+
+class _StudentDashboardState extends State<StudentDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +35,48 @@ class StudentDashboard extends StatelessWidget {
   }
 
   Widget _buildBody() {
-    return Container();
+    return Consumer(builder: (context, ref, _) {
+      return FirestoreListView<EventModel>(
+        pageSize: 20,
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        query: _buildQuery(selectedCategory: ref.read(selectedCategory)),
+        emptyBuilder: (context) => Center(
+          child: Text(
+            'Event is not availble!',
+            style: AppTextStyle(context).subTitle,
+          ),
+        ),
+        errorBuilder: (context, error, stackTrace) => Text(
+          error.toString(),
+          style: AppTextStyle(context).subTitle,
+        ),
+        itemBuilder: (context, doc) {
+          EventModel event = doc.data();
+          return Padding(
+            padding: EdgeInsets.only(bottom: 10.h),
+            child: EventCard(
+              event: event,
+              isAdmin: false,
+            ),
+          );
+        },
+      );
+    });
+  }
+
+  // static final doctorsQuery = FirebaseFirestore.instance
+  _buildQuery({required String selectedCategory}) {
+    Query query = FirebaseFirestore.instance
+        .collection('event')
+        .orderBy('date', descending: true);
+    if (selectedCategory != 'All') {
+      query = query.where('category', isEqualTo: selectedCategory);
+    }
+    return query.withConverter<EventModel>(
+        fromFirestore: (snapshot, _) {
+          return EventModel.fromMap(snapshot.data()!).copyWith(id: snapshot.id);
+        },
+        toFirestore: (event, _) => event.toMap());
   }
 
   Widget _buildDrawer() {
@@ -79,6 +132,9 @@ class StudentDashboard extends StatelessWidget {
                               onTap: () {
                                 ref.read(selectedCategory.notifier).state =
                                     categories[index];
+                                setState(() {});
+                                // Close drawer when an item is tapped
+                                Navigator.of(context).pop();
                               },
                             ),
                           )),
@@ -88,23 +144,29 @@ class StudentDashboard extends StatelessWidget {
           ),
           Flexible(
             flex: 1,
-            child: Container(
-              color: AppColor.white,
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.person,
-                      size: 22.sp,
-                    ),
-                    Gap(12.w),
-                    Text(
-                      'Profile',
-                      style: AppTextStyle(ContextLess.context).bodyText,
-                    )
-                  ],
+            child: GestureDetector(
+              onTap: () {
+                ContextLess.context.nav.popAndPushNamed(Routes.studentProfile);
+                // Close drawer when Profile is tapped
+              },
+              child: Container(
+                color: AppColor.white,
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.person,
+                        size: 22.sp,
+                      ),
+                      Gap(12.w),
+                      Text(
+                        'Profile',
+                        style: AppTextStyle(ContextLess.context).bodyText,
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),

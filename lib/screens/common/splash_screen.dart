@@ -1,40 +1,70 @@
-import 'package:event_management/config/app_text_style.dart';
 import 'package:event_management/routes.dart';
-import 'package:event_management/utils/context_less_navigation.dart';
+import 'package:event_management/services/hive_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SplashScreen extends HookWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final controller = useAnimationController(
+  SplashScreenState createState() => SplashScreenState();
+}
+
+class SplashScreenState extends ConsumerState<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.wait([ref.read(hiveServiceProvider).getUserInfo()]).then((value) {
+      Future.delayed(const Duration(seconds: 3), () {
+        if (value.first != null) {
+          if (value.first!['accountType'] == 'admin') {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                Routes.adminEventPage, (routes) => false);
+          } else if (value.first!['accountType'] == 'student') {
+            Navigator.of(context).pushNamedAndRemoveUntil(
+                Routes.studentDashboard, (route) => false);
+          }
+        } else {
+          Navigator.of(context).pushNamed(Routes.loginScreen);
+        }
+      });
+    });
+    controller = AnimationController(
+      vsync: this,
       duration: const Duration(seconds: 2),
     );
-    useEffect(() {
-      Future.delayed(const Duration(milliseconds: 500), () {
-        controller.forward();
-      });
-      Future.delayed(const Duration(seconds: 3), () {
-        context.nav.pushNamed(Routes.loginScreen);
-      });
-
-      return () {};
-    }, []);
-    return Scaffold(body: _buildBody(context, controller));
+    Future.delayed(const Duration(milliseconds: 500), () {
+      controller.forward();
+    });
   }
 
-  Widget _buildBody(BuildContext context, AnimationController controller) {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _buildBody(),
+    );
+  }
+
+  Widget _buildBody() {
     return Center(
       child: ScaleTransition(
         scale: Tween<double>(begin: 0.5, end: 1.0).animate(
             CurvedAnimation(parent: controller, curve: Curves.easeInOut)),
-        child: Text(
+        child: const Text(
           'Event Management UTM',
-          style: AppTextStyle(context).title,
+          style: TextStyle(fontSize: 24.0), // Change the style as needed
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 }
