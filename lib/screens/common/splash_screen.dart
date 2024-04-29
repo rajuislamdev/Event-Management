@@ -55,7 +55,7 @@ class SplashScreenState extends ConsumerState<SplashScreen>
         scale: Tween<double>(begin: 0.5, end: 1.0).animate(
             CurvedAnimation(parent: controller, curve: Curves.easeInOut)),
         child: const Text(
-          'Event Management UTM',
+          'UTMBuzz',
           style: TextStyle(fontSize: 24.0), // Change the style as needed
         ),
       ),
