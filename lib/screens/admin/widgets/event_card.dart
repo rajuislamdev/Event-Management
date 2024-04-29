@@ -46,7 +46,7 @@ class _EventCardState extends State<EventCard> {
             'Location: ${widget.event.location}',
             widget.event.details,
             'Deadline: ${widget.event.deadline}',
-            'Registration Fee: \$${widget.event.fee}',
+            'Registration Fee: RM${widget.event.fee}',
           ),
           Gap(12.h),
           Row(
@@ -178,8 +178,8 @@ class _EventCardState extends State<EventCard> {
             Text(
               registrationFee,
               style: AppTextStyle(context)
-                  .bodyText
-                  .copyWith(color: AppColor.green),
+                  .bodyTextSmall
+                  .copyWith(color: AppColor.green, fontSize: 10.sp),
             ),
           ],
         ),
