@@ -13,7 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 
-class Registration extends StatelessWidget {
+class Registration extends StatefulWidget {
   const Registration({super.key});
 
   static final nameController = TextEditingController();
@@ -25,8 +25,17 @@ class Registration extends StatelessWidget {
   static final programController = TextEditingController();
   static final semesterController = TextEditingController();
   static final passwordController = TextEditingController();
+  static final confPasswordController = TextEditingController();
 
   static final GlobalKey<FormBuilderState> _formKey = GlobalKey();
+
+  @override
+  State<Registration> createState() => _RegistrationState();
+}
+
+class _RegistrationState extends State<Registration> {
+  bool isPassVisible = false;
+  bool isPassVisible1 = false;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +48,7 @@ class Registration extends StatelessWidget {
   Widget _buildBody() {
     return Consumer(builder: (context, ref, _) {
       return FormBuilder(
-        key: _formKey,
+        key: Registration._formKey,
         child: Center(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -49,7 +58,7 @@ class Registration extends StatelessWidget {
                   CustomTextFormField(
                     name: 'Name',
                     textInputType: TextInputType.text,
-                    controller: nameController,
+                    controller: Registration.nameController,
                     textInputAction: TextInputAction.next,
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(
@@ -61,7 +70,7 @@ class Registration extends StatelessWidget {
                   CustomTextFormField(
                     name: 'Email',
                     textInputType: TextInputType.text,
-                    controller: emailController,
+                    controller: Registration.emailController,
                     textInputAction: TextInputAction.next,
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(
@@ -75,7 +84,7 @@ class Registration extends StatelessWidget {
                   CustomTextFormField(
                     name: 'Phone',
                     textInputType: TextInputType.text,
-                    controller: phoneController,
+                    controller: Registration.phoneController,
                     textInputAction: TextInputAction.next,
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(
@@ -91,7 +100,7 @@ class Registration extends StatelessWidget {
                         child: CustomTextFormField(
                           name: 'Utmid',
                           textInputType: TextInputType.text,
-                          controller: utmidController,
+                          controller: Registration.utmidController,
                           textInputAction: TextInputAction.next,
                           validator: FormBuilderValidators.compose([
                             FormBuilderValidators.required(
@@ -106,7 +115,7 @@ class Registration extends StatelessWidget {
                         child: CustomTextFormField(
                           name: 'Matric No',
                           textInputType: TextInputType.text,
-                          controller: matricnoController,
+                          controller: Registration.matricnoController,
                           textInputAction: TextInputAction.next,
                           validator: FormBuilderValidators.compose([
                             FormBuilderValidators.required(
@@ -215,16 +224,52 @@ class Registration extends StatelessWidget {
                   Gap(12.h),
                   CustomTextFormField(
                     name: 'Password',
+                    obscureText: !isPassVisible,
                     textInputType: TextInputType.text,
-                    controller: passwordController,
+                    controller: Registration.passwordController,
                     textInputAction: TextInputAction.next,
+                    widget: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          isPassVisible = !isPassVisible;
+                        });
+                      },
+                      icon: Icon(!isPassVisible
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                    ),
                     validator: FormBuilderValidators.compose([
                       FormBuilderValidators.required(
-                          errorText: 'Phone is required!'),
+                          errorText: 'Password is required!'),
                       FormBuilderValidators.minLength(6,
                           errorText: 'Password must be at least 6 charectures')
                     ]),
-                    hintText: "Enter your phone number here",
+                    hintText: "Enter your password here",
+                  ),
+                  Gap(12.h),
+                  CustomTextFormField(
+                    name: 'Confirm Password',
+                    obscureText: !isPassVisible1,
+                    textInputType: TextInputType.text,
+                    controller: Registration.confPasswordController,
+                    textInputAction: TextInputAction.next,
+                    widget: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          isPassVisible1 = !isPassVisible1;
+                        });
+                      },
+                      icon: Icon(!isPassVisible1
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                    ),
+                    validator: FormBuilderValidators.compose([
+                      FormBuilderValidators.required(
+                          errorText: 'Password is required!'),
+                      FormBuilderValidators.minLength(6,
+                          errorText: 'Password must be at least 6 charectures')
+                    ]),
+                    hintText: "Enter your confirm password here",
                   ),
                   Gap(40.h),
                   ref.watch(studentControllerProvider)
@@ -234,30 +279,43 @@ class Registration extends StatelessWidget {
                       : CustomButton(
                           buttonText: 'Sign Up',
                           onPressed: () {
-                            if (_formKey.currentState!.validate()) {
+                            if (Registration._formKey.currentState!
+                                .validate()) {
                               final Student student = Student(
-                                utmid: utmidController.text.trim(),
-                                name: nameController.text,
-                                email: emailController.text.trim(),
-                                phone: phoneController.text.trim(),
-                                matricNo: matricnoController.text.trim(),
-                                faculty: _formKey.currentState!
+                                utmid: Registration.utmidController.text.trim(),
+                                name: Registration.nameController.text,
+                                email: Registration.emailController.text.trim(),
+                                phone: Registration.phoneController.text.trim(),
+                                matricNo:
+                                    Registration.matricnoController.text.trim(),
+                                faculty: Registration._formKey.currentState!
                                     .fields['faculty']!.value as String,
-                                program: _formKey.currentState!
+                                program: Registration._formKey.currentState!
                                     .fields['program']!.value as String,
-                                semester: _formKey.currentState!
+                                semester: Registration._formKey.currentState!
                                     .fields['semester']!.value as String,
                               );
-                              ref
-                                  .read(studentControllerProvider.notifier)
-                                  .registration(
-                                      student: student,
-                                      password: passwordController.text.trim())
-                                  .then((isSuccess) {
-                                if (isSuccess) {
-                                  context.nav.pop();
-                                }
-                              });
+                              if (Registration.passwordController.text ==
+                                  Registration.confPasswordController.text) {
+                                ref
+                                    .read(studentControllerProvider.notifier)
+                                    .registration(
+                                        student: student,
+                                        password: Registration
+                                            .passwordController.text
+                                            .trim())
+                                    .then((isSuccess) {
+                                  if (isSuccess) {
+                                    context.nav.pop();
+                                  }
+                                });
+                              } else {
+                                GlobalFunction.showCustomSnackbar(
+                                  message:
+                                      'Your confirm password does not match!',
+                                  isSuccess: false,
+                                );
+                              }
                             }
                           },
                         )
@@ -297,17 +355,34 @@ class Registration extends StatelessWidget {
   }
 }
 
-final List<String> faculty = ['Faculty1', 'Faculty2', 'Faculty3', 'Faculty4'];
-final List<String> programs = ['Program1', 'Program2', 'Program3', 'Program4'];
+final List<String> faculty = [
+  'FAB',
+  'FBME',
+  'FKA',
+  'FC',
+  'FChE',
+  'FKE',
+  'FKM',
+  'FGHT',
+  'FP',
+  'FM',
+  'FS',
+  'FIC',
+  'FPREE',
+  'Language Academy'
+];
+final List<String> programs = [
+  'Undergraduate',
+  'Postgraduate',
+  'Diploma',
+];
 final List<String> semester = [
-  'First',
-  'Second',
-  'Third',
-  'Four',
-  'Five',
-  'Six',
-  'Seven',
-  'Eight',
-  'Nine',
-  'Ten'
+  '1',
+  '2',
+  '3',
+  '4',
+  '5',
+  '6',
+  '7',
+  '8',
 ];

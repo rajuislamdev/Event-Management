@@ -14,7 +14,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:gap/gap.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
   static final TextEditingController _utmidController = TextEditingController();
   static final TextEditingController _passwordController =
@@ -26,6 +26,13 @@ class LoginScreen extends StatelessWidget {
     {'key': 'student', 'type': 'Student'},
     {'key': 'admin', 'type': 'Admin'},
   ];
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  bool isPassVisible1 = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +46,7 @@ class LoginScreen extends StatelessWidget {
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: FormBuilder(
-          key: _formKey,
+          key: LoginScreen._formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -47,7 +54,7 @@ class LoginScreen extends StatelessWidget {
               CustomTextFormField(
                 name: 'Utmid',
                 textInputType: TextInputType.text,
-                controller: _utmidController,
+                controller: LoginScreen._utmidController,
                 textInputAction: TextInputAction.next,
                 validator: FormBuilderValidators.compose([
                   FormBuilderValidators.required(
@@ -58,8 +65,19 @@ class LoginScreen extends StatelessWidget {
               Gap(20.h),
               CustomTextFormField(
                 name: 'Password',
+                obscureText: !isPassVisible1,
                 textInputType: TextInputType.text,
-                controller: _passwordController,
+                widget: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      isPassVisible1 = !isPassVisible1;
+                    });
+                  },
+                  icon: Icon(!isPassVisible1
+                      ? Icons.visibility_off
+                      : Icons.visibility),
+                ),
+                controller: LoginScreen._passwordController,
                 textInputAction: TextInputAction.next,
                 validator: FormBuilderValidators.compose([
                   FormBuilderValidators.required(
@@ -97,15 +115,17 @@ class LoginScreen extends StatelessWidget {
                   : CustomButton(
                       buttonText: 'Log in',
                       onPressed: () {
-                        if (_formKey.currentState!.validate()) {
+                        if (LoginScreen._formKey.currentState!.validate()) {
                           if (ref.read(selectedAccountType) ==
                               AccountType.student.name) {
                             print('call');
                             ref
                                 .read(studentControllerProvider.notifier)
                                 .login(
-                                  utmid: _utmidController.text.trim(),
-                                  password: _passwordController.text.trim(),
+                                  utmid:
+                                      LoginScreen._utmidController.text.trim(),
+                                  password: LoginScreen._passwordController.text
+                                      .trim(),
                                 )
                                 .then((isSuccess) {
                               if (isSuccess) {
@@ -117,8 +137,10 @@ class LoginScreen extends StatelessWidget {
                             ref
                                 .read(adminControllerProvider.notifier)
                                 .login(
-                                  utmid: _utmidController.text.trim(),
-                                  password: _passwordController.text.trim(),
+                                  utmid:
+                                      LoginScreen._utmidController.text.trim(),
+                                  password: LoginScreen._passwordController.text
+                                      .trim(),
                                 )
                                 .then((isSuccess) {
                               if (isSuccess) {

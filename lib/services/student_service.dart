@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crypto/crypto.dart';
 import 'package:event_management/models/student.dart';
 import 'package:event_management/screens/common/login_screen.dart';
 import 'package:event_management/services/hive_service.dart';
@@ -55,7 +58,7 @@ class StudentService {
     try {
       final studentData = <String, dynamic>{
         ...student.toMap(),
-        'password': password,
+        'password': _hashPassword(password),
       };
       final bool isUnique = await isUtmidUnique(utmid: student.utmid);
       if (isUnique) {
@@ -84,7 +87,7 @@ class StudentService {
         final userData = await getUserData(utmid: utmid);
         final storePassword = userData['password'];
         final docId = userData['id'];
-        if (password == storePassword) {
+        if (_hashPassword(password) == storePassword) {
           ref
               .read(hiveServiceProvider)
               .setUserInfo(id: docId, accountType: AccountType.student.name);
@@ -125,6 +128,18 @@ class StudentService {
       debugPrint("Error updating admin info: $error");
     }
     return;
+  }
+
+  String _hashPassword(String password) {
+    // Generate a salt (you can configure bcrypt to generate a salt for you)
+    String salt =
+        'ljl3498340998mnlkdsfdfnk'; // You should use a secure randomly generated salt
+    String saltedPassword = password + salt;
+    // Hash the password using bcrypt
+    // Hash the password using bcrypt
+    var bytes = utf8.encode(saltedPassword); // Encode the password as UTF-8
+    var digest = sha256.convert(bytes); // Apply SHA-256 hash function
+    return digest.toString();
   }
 }
 
