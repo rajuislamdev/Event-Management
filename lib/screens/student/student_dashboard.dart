@@ -22,13 +22,23 @@ class StudentDashboard extends StatefulWidget {
 }
 
 class _StudentDashboardState extends State<StudentDashboard> {
+  late TextEditingController searchController;
+  @override
+  void initState() {
+    super.initState();
+    searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    searchController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Events'),
-        centerTitle: true,
-      ),
+      appBar: customAppBar(),
       drawer: _buildDrawer(),
       body: _buildBody(),
     );
@@ -72,6 +82,9 @@ class _StudentDashboardState extends State<StudentDashboard> {
     if (selectedCategory != 'All') {
       query = query.where('category', isEqualTo: selectedCategory);
     }
+    if (searchController.text.isNotEmpty) {
+      query = query.where('eventName', isEqualTo: searchController.text);
+    }
     return query.withConverter<EventModel>(
         fromFirestore: (snapshot, _) {
           return EventModel.fromMap(snapshot.data()!).copyWith(id: snapshot.id);
@@ -106,38 +119,37 @@ class _StudentDashboardState extends State<StudentDashboard> {
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
                 child: Scrollbar(
                   child: ListView.builder(
-                      padding: EdgeInsets.zero,
-                      itemCount: categories.length,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) => Padding(
-                            padding: EdgeInsets.symmetric(vertical: 5.h),
-                            child: ListTile(
-                              selected: ref.watch(selectedCategory) ==
-                                  categories[index],
-                              selectedTileColor: AppColor.purple,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.r),
-                              ),
-                              tileColor: AppColor.offWhite,
-                              title: Text(
-                                categories[index],
-                                style: AppTextStyle(context)
-                                    .bodyTextSmall
-                                    .copyWith(
-                                        color: ref.watch(selectedCategory) ==
-                                                categories[index]
-                                            ? AppColor.white
-                                            : null),
-                              ),
-                              onTap: () {
-                                ref.read(selectedCategory.notifier).state =
-                                    categories[index];
-                                setState(() {});
-                                // Close drawer when an item is tapped
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          )),
+                    padding: EdgeInsets.zero,
+                    itemCount: categories.length,
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) => Padding(
+                      padding: EdgeInsets.symmetric(vertical: 5.h),
+                      child: ListTile(
+                        selected:
+                            ref.watch(selectedCategory) == categories[index],
+                        selectedTileColor: AppColor.purple,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.r),
+                        ),
+                        tileColor: AppColor.offWhite,
+                        title: Text(
+                          categories[index],
+                          style: AppTextStyle(context).bodyTextSmall.copyWith(
+                              color: ref.watch(selectedCategory) ==
+                                      categories[index]
+                                  ? AppColor.white
+                                  : null),
+                        ),
+                        onTap: () {
+                          ref.read(selectedCategory.notifier).state =
+                              categories[index];
+                          setState(() {});
+                          // Close drawer when an item is tapped
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  ),
                 ),
               );
             }),
@@ -175,7 +187,82 @@ class _StudentDashboardState extends State<StudentDashboard> {
       ),
     );
   }
+
+  PreferredSizeWidget customAppBar() {
+    return AppBar(
+      title: const Text('Events'),
+      centerTitle: false,
+      flexibleSpace: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              AppColor.purple,
+              AppColor.blue,
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        Stack(
+          children: [
+            Container(
+              margin: EdgeInsets.only(right: 16.w),
+              width: 240,
+              child: TextFormField(
+                scrollPadding: EdgeInsets.zero,
+                controller: searchController,
+                textAlign: TextAlign.start,
+                style: AppTextStyle(context)
+                    .bodyTextSmall
+                    .copyWith(color: AppColor.white),
+                onChanged: (v) {},
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10.w),
+                  hintText: 'Search',
+                  hintStyle: AppTextStyle(context)
+                      .bodyTextSmall
+                      .copyWith(color: AppColor.offWhite.withOpacity(0.5)),
+                  border: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: AppColor.offWhite.withOpacity(0.5)),
+                    borderRadius: BorderRadius.circular(
+                      12.sp,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        BorderSide(color: AppColor.offWhite.withOpacity(0.5)),
+                    borderRadius: BorderRadius.circular(
+                      12.sp,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              right: 26.w,
+              top: 10.h,
+              child: GestureDetector(
+                onTap: () {
+                  setState(() {});
+                  Future.delayed(const Duration(milliseconds: 500), () {
+                    searchController.clear();
+                  });
+                },
+                child: const Icon(
+                  Icons.search,
+                  color: AppColor.purple,
+                ),
+              ),
+            ),
+          ],
+        )
+      ],
+    );
+  }
 }
+
+// custom appbar
 
 final List<String> categories = [
   'All',
