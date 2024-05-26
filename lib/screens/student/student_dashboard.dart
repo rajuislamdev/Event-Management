@@ -46,10 +46,14 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
   Widget _buildBody() {
     return Consumer(builder: (context, ref, _) {
+      String searchTerm = searchController.text;
+
       return FirestoreListView<EventModel>(
         pageSize: 20,
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-        query: _buildQuery(selectedCategory: ref.read(selectedCategory)),
+        query: _buildQuery(
+            selectedCategory: ref.read(selectedCategory),
+            searchTerm: searchTerm),
         emptyBuilder: (context) => Center(
           child: Text(
             'Event is not availble!',
@@ -75,15 +79,20 @@ class _StudentDashboardState extends State<StudentDashboard> {
   }
 
   // static final doctorsQuery = FirebaseFirestore.instance
-  _buildQuery({required String selectedCategory}) {
+  _buildQuery({
+    required String selectedCategory,
+    required String searchTerm,
+  }) {
     Query query = FirebaseFirestore.instance
         .collection('event')
+        .orderBy('eventName')
         .orderBy('date', descending: true);
     if (selectedCategory != 'All') {
       query = query.where('category', isEqualTo: selectedCategory);
     }
-    if (searchController.text.isNotEmpty) {
-      query = query.where('eventName', isEqualTo: searchController.text);
+    if (searchTerm.isNotEmpty) {
+      // query = query.where('eventName', arrayContains: searchTerm.toLowerCase());
+      query = query.startAt([searchTerm]).endAt(['$searchTerm\uf8ff']);
     }
     return query.withConverter<EventModel>(
         fromFirestore: (snapshot, _) {
@@ -215,7 +224,9 @@ class _StudentDashboardState extends State<StudentDashboard> {
                 style: AppTextStyle(context)
                     .bodyTextSmall
                     .copyWith(color: AppColor.white),
-                onChanged: (v) {},
+                onChanged: (v) {
+                  setState(() {});
+                },
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.symmetric(horizontal: 10.w),
                   hintText: 'Search',
@@ -242,17 +253,9 @@ class _StudentDashboardState extends State<StudentDashboard> {
             Positioned(
               right: 26.w,
               top: 10.h,
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {});
-                  Future.delayed(const Duration(milliseconds: 500), () {
-                    searchController.clear();
-                  });
-                },
-                child: const Icon(
-                  Icons.search,
-                  color: AppColor.purple,
-                ),
+              child: const Icon(
+                Icons.search,
+                color: AppColor.purple,
               ),
             ),
           ],

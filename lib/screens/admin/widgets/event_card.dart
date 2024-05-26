@@ -131,7 +131,7 @@ class _EventCardState extends State<EventCard> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              eventName,
+              eventName[0].toUpperCase() + eventName.substring(1),
               style: AppTextStyle(context)
                   .bodyText
                   .copyWith(fontWeight: FontWeight.bold),

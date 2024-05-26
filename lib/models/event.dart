@@ -53,7 +53,7 @@ class EventModel {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'category': category,
-      'eventName': eventName,
+      'eventName': eventName.toLowerCase(),
       'organizer': organizer,
       'date': date,
       'time': time,
