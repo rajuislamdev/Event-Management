@@ -46,14 +46,15 @@ class _StudentDashboardState extends State<StudentDashboard> {
 
   Widget _buildBody() {
     return Consumer(builder: (context, ref, _) {
-      String searchTerm = searchController.text;
+      String searchTerm = searchController.text.toLowerCase();
 
       return FirestoreListView<EventModel>(
         pageSize: 20,
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
         query: _buildQuery(
             selectedCategory: ref.read(selectedCategory),
-            searchTerm: searchTerm),
+            searchTerm: searchTerm,
+            ),
         emptyBuilder: (context) => Center(
           child: Text(
             'Event is not availble!',
