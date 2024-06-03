@@ -130,21 +130,23 @@ class _EventCardState extends State<EventCard> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              eventName[0].toUpperCase() + eventName.substring(1),
-              style: AppTextStyle(context)
-                  .bodyText
-                  .copyWith(fontWeight: FontWeight.bold),
+            Flexible(
+              flex: 1,
+              child: Text(
+                eventName[0].toUpperCase() + eventName.substring(1),
+                style: AppTextStyle(context)
+                    .bodyText
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
             ),
-            Row(
-              children: [
-                Text(
-                  dateTime,
-                  style: AppTextStyle(context)
-                      .bodyTextSmall
-                      .copyWith(color: AppColor.blue),
-                ),
-              ],
+            Flexible(
+              flex: 1,
+              child: Text(
+                dateTime,
+                style: AppTextStyle(context)
+                    .bodyTextSmall
+                    .copyWith(color: AppColor.blue),
+              ),
             ),
           ],
         ),
